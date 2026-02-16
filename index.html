@@ -291,17 +291,12 @@
     margin-top: 20px;
   }
 
-  /* Print / leave-behind mode */
+  /* Print / leave-behind mode — dark theme preserved */
+  @page { size: landscape; margin: 0; }
   @media print {
-    body { overflow: auto; background: white; color: #111; }
-    .slide { display: flex !important; min-height: auto; padding: 40px; page-break-after: always; border-bottom: 1px solid #ddd; }
+    body { overflow: auto; background: var(--bg); color: var(--text); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .slide { display: flex !important; min-height: 100vh; padding: 50px 80px; page-break-after: always; page-break-inside: avoid; }
     .progress-bar, .nav-hint, .slide-number { display: none; }
-    .card { border-color: #ddd; background: #f9f9f9; }
-    h1, h2, h3 { color: #111; }
-    .gradient, .gradient-green, .gradient-warn {
-      -webkit-text-fill-color: #111;
-      background: none;
-    }
   }
 </style>
 </head>
@@ -480,7 +475,7 @@
 <!-- SLIDE 4: The middleware trap -->
 <div class="slide" data-slide="4">
   <div class="label">The real conversation</div>
-  <h2>Copilot wrappers vs.<br><span class="gradient-green">direct model access</span></h2>
+  <h2>Copilot wrappers vs. <span class="gradient-green">direct model access</span></h2>
   <div class="two-col">
     <div>
       <h3 style="color: var(--danger);">The wrapper approach</h3>
@@ -491,7 +486,6 @@
           <li>Copilot failed in Excel, PowerPoint, and Copilot Studio</li>
           <li>Microsoft brought in <strong>Claude</strong> to fix it, enabled by default Jan 2026</li>
           <li>$30/user/month for a wrapper around someone else's model</li>
-          <li>Gartner: only <strong>6%</strong> of enterprises moved GenAI past pilot</li>
         </ul>
       </div>
     </div>
@@ -509,7 +503,7 @@
       </div>
     </div>
   </div>
-  <blockquote style="margin-top: 24px;">
+  <blockquote style="margin-top: 24px; font-size: 18px;">
     Microsoft spent $13B on OpenAI, and still had to bring in Claude.<br>
     Skip the wrapper. Go direct to the models.
   </blockquote>
@@ -535,7 +529,7 @@
   </div>
   <blockquote style="margin-top: 30px;">
     Tower's silicon powers the AI revolution.<br>
-    Tower's teams should be powered by it too.
+    The AI revolution should power Tower's teams.
   </blockquote>
 </div>
 
