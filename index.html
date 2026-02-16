@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen AI Applied: Tower Semiconductor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0a;
+    --text: #f0f0f0;
+    --dim: #888;
+    --accent: #4f8cff;
+    --accent2: #a855f7;
+    --accent3: #10b981;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --card-bg: rgba(255,255,255,0.04);
+    --card-border: rgba(255,255,255,0.08);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* Slide system */
+  .slide {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 60px 100px;
+    position: relative;
+  }
+  .slide.active { display: flex; }
+  .slide.center { align-items: center; text-align: center; }
+
+  .slide-number {
+    position: fixed;
+    bottom: 30px;
+    right: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: #555;
+  }
+  .nav-hint {
+    position: fixed;
+    bottom: 30px;
+    left: 40px;
+    font-size: 13px;
+    color: #444;
+  }
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), #ec4899);
+    transition: width 0.4s ease;
+    z-index: 100;
+  }
+
+  /* Typography */
+  h1 {
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    letter-spacing: -2px;
+  }
+  h2 {
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 24px;
+    letter-spacing: -1.5px;
+  }
+  h3 {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #ccc;
+  }
+  .subtitle {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--dim);
+    max-width: 700px;
+    line-height: 1.5;
+  }
+  .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  /* Gradient text */
+  .gradient {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gradient-green {
+    background: linear-gradient(135deg, var(--accent3), #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gradient-warn {
+    background: linear-gradient(135deg, var(--warn), var(--danger));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    gap: 20px;
+    margin-top: 30px;
+    width: 100%;
+  }
+  .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 28px;
+  }
+  .card h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .card p, .card li {
+    font-size: 16px;
+    color: #aaa;
+    line-height: 1.6;
+  }
+  .card ul { list-style: none; padding: 0; }
+  .card li { padding: 4px 0; }
+  .card li::before { content: "→ "; color: var(--accent); font-weight: 600; }
+  .card.highlight { border-color: var(--accent); background: rgba(79,140,255,0.06); }
+  .card.warn { border-color: var(--warn); background: rgba(245,158,11,0.06); }
+  .card.green { border-color: var(--accent3); background: rgba(16,185,129,0.06); }
+
+  /* Stat blocks */
+  .stat-row {
+    display: flex;
+    gap: 40px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat .number {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -2px;
+  }
+  .stat .desc {
+    font-size: 14px;
+    color: var(--dim);
+    margin-top: 6px;
+  }
+
+  /* Quote */
+  blockquote {
+    border-left: 3px solid var(--accent2);
+    padding: 16px 24px;
+    margin: 24px 0;
+    font-size: 24px;
+    font-weight: 300;
+    font-style: italic;
+    color: #ccc;
+    max-width: 800px;
+    line-height: 1.5;
+  }
+  blockquote .attr {
+    font-size: 14px;
+    font-style: normal;
+    color: var(--dim);
+    margin-top: 8px;
+  }
+
+  /* Timeline */
+  .timeline {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin: 30px 0;
+    width: 100%;
+  }
+  .timeline-item {
+    flex: 1;
+    padding: 20px;
+    position: relative;
+    border-top: 2px solid #333;
+  }
+  .timeline-item.active { border-top-color: var(--accent); }
+  .timeline-item .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #333;
+    position: absolute;
+    top: -7px;
+    left: 20px;
+  }
+  .timeline-item.active .dot { background: var(--accent); box-shadow: 0 0 10px rgba(79,140,255,0.5); }
+  .timeline-item h4 { font-size: 16px; margin-bottom: 8px; }
+  .timeline-item p { font-size: 14px; color: var(--dim); line-height: 1.5; }
+
+  /* Lists */
+  .clean-list { list-style: none; padding: 0; }
+  .clean-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 18px;
+    line-height: 1.5;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .clean-list li:last-child { border-bottom: none; }
+  .clean-list .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--accent);
+    min-width: 24px;
+  }
+  .clean-list .q-text { color: #ccc; }
+
+  /* Two column layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  /* Comparison table */
+  .compare {
+    width: 100%;
+    margin-top: 20px;
+  }
+  .compare-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .compare-row.header {
+    border-bottom: 2px solid rgba(255,255,255,0.15);
+  }
+  .compare-cell {
+    padding: 14px 16px;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .compare-row.header .compare-cell {
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--dim);
+  }
+  .compare-cell:first-child { color: var(--dim); font-weight: 500; }
+  .compare-cell.bad { color: #ef4444; }
+  .compare-cell.good { color: #10b981; }
+
+  /* Small text */
+  .footnote {
+    font-size: 13px;
+    color: #555;
+    margin-top: 20px;
+  }
+
+  /* Print / leave-behind mode */
+  @media print {
+    body { overflow: auto; background: white; color: #111; }
+    .slide { display: flex !important; min-height: auto; padding: 40px; page-break-after: always; border-bottom: 1px solid #ddd; }
+    .progress-bar, .nav-hint, .slide-number { display: none; }
+    .card { border-color: #ddd; background: #f9f9f9; }
+    h1, h2, h3 { color: #111; }
+    .gradient, .gradient-green, .gradient-warn {
+      -webkit-text-fill-color: #111;
+      background: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<!-- SLIDE 1: Title -->
+<div class="slide center active" data-slide="1">
+  <div class="label">February 2026</div>
+  <h1>Gen AI <span class="gradient">Applied</span></h1>
+  <p class="subtitle" style="margin-top: 12px;">
+    A practical look at where Gen AI is today,<br>
+    what it means for Tower Semiconductor,<br>
+    and how to get into the race.
+  </p>
+  <p style="margin-top: 40px; color: #555; font-size: 15px;">Prepared for Tower Semiconductor</p>
+</div>
+
+<!-- SLIDE 2: The acceleration -->
+<div class="slide" data-slide="2">
+  <div class="label">The acceleration</div>
+  <h2>This happened in the last <span class="gradient-warn">90 days</span></h2>
+
+  <!-- Countdown timeline -->
+  <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap:0; width:100%; margin-top:30px;">
+
+    <!-- 90 days ago -->
+    <div style="padding:20px 24px; border-left:3px solid #333; position:relative;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#555; margin-bottom:8px;">NOV 2025</div>
+      <div style="font-size:36px; font-weight:900; letter-spacing:-2px; color:#666;">90</div>
+      <div style="font-size:12px; color:#555; margin-bottom:12px;">days ago</div>
+      <p style="font-size:14px; color:#888; line-height:1.5;">AI could code autonomously for <strong style="color:#aaa;">~7 hours</strong>. GitHub Copilot writing <strong style="color:#aaa;">46%</strong> of all code. Most teams experimenting, few deploying.</p>
+    </div>
+
+    <!-- 60 days ago -->
+    <div style="padding:20px 24px; border-left:3px solid #555; position:relative;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#666; margin-bottom:8px;">DEC 2025</div>
+      <div style="font-size:36px; font-weight:900; letter-spacing:-2px; color:#999;">60</div>
+      <div style="font-size:12px; color:#666; margin-bottom:12px;">days ago</div>
+      <p style="font-size:14px; color:#999; line-height:1.5;">Phase change. Models crossed from brittle tools to <strong style="color:#ccc;">capable collaborators</strong>. Reasoning, planning, self-correction. Rakuten hit <strong style="color:#ccc;">79% faster</strong> time-to-market.</p>
+    </div>
+
+    <!-- 30 days ago -->
+    <div style="padding:20px 24px; border-left:3px solid var(--accent); position:relative;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent); margin-bottom:8px;">JAN 2026</div>
+      <div style="font-size:36px; font-weight:900; letter-spacing:-2px; color:var(--accent);">30</div>
+      <div style="font-size:12px; color:var(--accent); margin-bottom:12px;">days ago</div>
+      <p style="font-size:14px; color:#ccc; line-height:1.5;"><strong style="color:#fff;">90% of Claude's code</strong> now written by Claude itself. OpenAI's Codex "helped build itself." Google's AlphaEvolve is optimizing Gemini, which powers AlphaEvolve. AI is building AI.</p>
+    </div>
+
+    <!-- Now -->
+    <div style="padding:20px 24px; border-left:3px solid var(--accent2); background:rgba(168,85,247,0.06); border-radius:0 8px 8px 0; position:relative;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent2); margin-bottom:8px;">FEB 2026</div>
+      <div style="font-size:36px; font-weight:900; letter-spacing:-2px; color:var(--accent2);">NOW</div>
+      <div style="font-size:12px; color:var(--accent2); margin-bottom:12px;">&nbsp;</div>
+      <p style="font-size:14px; color:#ddd; line-height:1.5;">Feb 6: 16 agents build a <strong style="color:#fff;">100K-line C compiler</strong> in 2 weeks for $20K. Devs <strong style="color:#fff;">55% faster</strong>. Amodei at Davos: <em>"That loop starts to close very fast."</em></p>
+    </div>
+
+  </div>
+
+  <!-- METR exponential curve (simplified SVG) -->
+  <div style="display:flex; align-items:flex-end; gap:40px; margin-top:30px; width:100%;">
+    <div style="flex:1;">
+      <svg viewBox="0 0 500 140" style="width:100%; max-width:500px;" xmlns="http://www.w3.org/2000/svg">
+        <!-- Grid lines -->
+        <line x1="60" y1="10" x2="60" y2="120" stroke="#222" stroke-width="1"/>
+        <line x1="60" y1="120" x2="490" y2="120" stroke="#222" stroke-width="1"/>
+        <line x1="60" y1="85" x2="490" y2="85" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="60" y1="50" x2="490" y2="50" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="60" y1="15" x2="490" y2="15" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="4"/>
+
+        <!-- Y-axis labels (log scale) -->
+        <text x="55" y="123" text-anchor="end" fill="#555" font-size="9" font-family="JetBrains Mono,monospace">1 min</text>
+        <text x="55" y="88" text-anchor="end" fill="#555" font-size="9" font-family="JetBrains Mono,monospace">1 hr</text>
+        <text x="55" y="53" text-anchor="end" fill="#555" font-size="9" font-family="JetBrains Mono,monospace">1 day</text>
+        <text x="55" y="18" text-anchor="end" fill="#555" font-size="9" font-family="JetBrains Mono,monospace">2 wks</text>
+
+        <!-- X-axis labels -->
+        <text x="80" y="135" fill="#555" font-size="9" font-family="JetBrains Mono,monospace">2019</text>
+        <text x="170" y="135" fill="#555" font-size="9" font-family="JetBrains Mono,monospace">2021</text>
+        <text x="260" y="135" fill="#555" font-size="9" font-family="JetBrains Mono,monospace">2023</text>
+        <text x="350" y="135" fill="#555" font-size="9" font-family="JetBrains Mono,monospace">2024</text>
+        <text x="420" y="135" fill="#666" font-size="9" font-family="JetBrains Mono,monospace">2025</text>
+        <text x="465" y="135" fill="var(--accent2)" font-size="9" font-weight="bold" font-family="JetBrains Mono,monospace">NOW</text>
+
+        <!-- Exponential curve -->
+        <path d="M 80,118 C 120,117 160,115 200,113 S 260,108 300,100 S 350,88 390,72 S 430,50 470,15"
+              stroke="url(#curveGrad)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <!-- Gradient for curve -->
+        <defs>
+          <linearGradient id="curveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#333"/>
+            <stop offset="50%" stop-color="var(--accent)"/>
+            <stop offset="100%" stop-color="var(--accent2)"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Data points -->
+        <circle cx="80" cy="118" r="3" fill="#444"/>
+        <circle cx="200" cy="113" r="3" fill="#555"/>
+        <circle cx="300" cy="100" r="3" fill="#777"/>
+        <circle cx="390" cy="72" r="4" fill="var(--accent)"/>
+        <circle cx="470" cy="15" r="5" fill="var(--accent2)"/>
+
+        <!-- Labels on curve -->
+        <text x="80" y="112" fill="#555" font-size="8" font-family="Inter,sans-serif">GPT-2</text>
+        <text x="290" y="95" fill="#777" font-size="8" font-family="Inter,sans-serif">GPT-4</text>
+        <text x="375" y="66" fill="var(--accent)" font-size="8" font-family="Inter,sans-serif">Claude 3.5</text>
+        <text x="440" y="11" fill="var(--accent2)" font-size="9" font-weight="600" font-family="Inter,sans-serif">Opus 4.6</text>
+
+        <!-- Doubling annotation -->
+        <text x="270" y="42" fill="#555" font-size="9" font-style="italic" font-family="Inter,sans-serif">Doubling every 7 months</text>
+        <text x="270" y="52" fill="#666" font-size="8" font-style="italic" font-family="Inter,sans-serif">...accelerating to every 4</text>
+      </svg>
+      <p style="font-size:11px; color:#444; margin-top:4px;">
+        AI autonomous task horizon &middot; Source: <a href="https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/" style="color:#555;">METR Research</a>
+      </p>
+    </div>
+    <div style="max-width:280px;">
+      <p style="font-size:15px; color:#aaa; line-height:1.6;">
+        If this curve continues for 2-4 more years, AI agents will autonomously complete <strong style="color:#fff;">week-long projects</strong>.
+        By end of decade: <strong style="color:#fff;">month-long projects</strong>.
+      </p>
+    </div>
+  </div>
+
+  <p class="footnote" style="margin-top:16px;">Sources:
+    <a href="https://www.anthropic.com/engineering/building-c-compiler" style="color:#555;">Anthropic</a> &middot;
+    <a href="https://rakuten.today/blog/rakuten-accelerates-development-with-claude-code%EF%BF%BC.html" style="color:#555;">Rakuten</a> &middot;
+    <a href="https://resources.github.com/learn/pathways/copilot/essentials/measuring-the-impact-of-github-copilot/" style="color:#555;">GitHub</a> &middot;
+    <a href="https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/" style="color:#555;">METR</a> &middot;
+    <a href="https://www.nbcnews.com/tech/innovation/openai-says-new-codex-coding-model-helped-build-rcna257521" style="color:#555;">NBC: Codex built itself</a> &middot;
+    <a href="https://www.maginative.com/article/googles-deepmind-unveils-alphaevolve-an-ai-system-that-designs-and-optimizes-algorithms/" style="color:#555;">AlphaEvolve</a> &middot;
+    <a href="https://www.axios.com/2025/09/17/ai-anthropic-amodei-claude" style="color:#555;">Axios: Amodei</a>
+  </p>
+</div>
+
+<!-- SLIDE 3: The two-class system -->
+<div class="slide" data-slide="3">
+  <div class="label">The divide</div>
+  <h2>Two classes are forming<br>inside <span class="gradient-warn">every</span> organization</h2>
+  <div class="compare">
+    <div class="compare-row header">
+      <div class="compare-cell"></div>
+      <div class="compare-cell">AI-Fluent Teams</div>
+      <div class="compare-cell">Everyone Else</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell">Work style</div>
+      <div class="compare-cell good">Delegate to agents, validate outputs</div>
+      <div class="compare-cell bad">AI as "Question & Answer" chatbot (2024 tech)</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell">Core skill</div>
+      <div class="compare-cell good">Specify what to build + validate results</div>
+      <div class="compare-cell bad">Write code manually</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell">Time to ship</div>
+      <div class="compare-cell good">10 minutes (real example)</div>
+      <div class="compare-cell bad">Weeks to months</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell">Compensation trend</div>
+      <div class="compare-cell good">+28% premium and rising</div>
+      <div class="compare-cell bad">Flat or declining as code gets cheaper</div>
+    </div>
+  </div>
+  <blockquote style="margin-top: 30px;">
+    "Code is about to cost nothing.<br>Not knowing how to build with Gen AI: that's about to cost everything."
+  </blockquote>
+</div>
+
+<!-- SLIDE 4: The middleware trap -->
+<div class="slide" data-slide="4">
+  <div class="label">The real conversation</div>
+  <h2>Copilot wrappers vs.<br><span class="gradient-green">direct model access</span></h2>
+  <div class="two-col">
+    <div>
+      <h3 style="color: var(--danger);">The wrapper approach</h3>
+      <div class="card warn">
+        <h4>M365 Copilot: the data speaks</h4>
+        <ul>
+          <li><em>"For the most part, [Copilot integrations] don't really work. They're not smart."</em> — Satya Nadella, Microsoft CEO</li>
+          <li>Copilot failed in Excel, PowerPoint, and Copilot Studio</li>
+          <li>Microsoft brought in <strong>Claude</strong> to fix it, enabled by default Jan 2026</li>
+          <li>$30/user/month for a wrapper around someone else's model</li>
+          <li>Gartner: only <strong>6%</strong> of enterprises moved GenAI past pilot</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color: var(--accent3);">Direct model access</h3>
+      <div class="card green">
+        <h4>Claude Code, GitHub Copilot, Cursor</h4>
+        <ul>
+          <li>Tower's engineers work with the raw model, the same Claude that MS had to bring in</li>
+          <li>Plan, strategize, build: not just a chatbot, not only a coder, but a capable collaborator</li>
+          <li>Agents that run for hours or days on real problems</li>
+          <li>Customizable to Tower's domain, data, and process</li>
+          <li>Building capability, not buying a product</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <blockquote style="margin-top: 24px;">
+    Microsoft spent $13B on OpenAI, and still had to bring in Claude.<br>
+    Skip the wrapper. Go direct to the models.
+  </blockquote>
+</div>
+
+<!-- SLIDE 5: Tower's position -->
+<div class="slide" data-slide="5">
+  <div class="label">Tower Semiconductor</div>
+  <h2>Tower builds the chips AI runs on. <span class="gradient">Own it.</span></h2>
+  <div class="card-grid cols-3">
+    <div class="card highlight">
+      <h4>NVIDIA Partnership</h4>
+      <p>1.6T optical modules for AI data centers. Tower is in the critical path of AI infrastructure.</p>
+    </div>
+    <div class="card highlight">
+      <h4>85% SiPho Market Share</h4>
+      <p>Silicon photonics solves the GPU memory wall. No established competitor. 3-5 year lead.</p>
+    </div>
+    <div class="card highlight">
+      <h4>$920M Capex &middot; 5x Scale</h4>
+      <p>Capacity 5x by Q4 2026. Every operational bottleneck gets 5x worse. Every efficiency gain matters 5x more.</p>
+    </div>
+  </div>
+  <blockquote style="margin-top: 30px;">
+    Tower's silicon powers the AI revolution.<br>
+    Tower's teams should be powered by it too.
+  </blockquote>
+</div>
+
+<!-- SLIDE 6: Where AI hits Tower's operations -->
+<div class="slide" data-slide="6">
+  <div class="label">Patterns we're seeing</div>
+  <h2>Where teams like Tower's are <span class="gradient-green">finding ROI</span></h2>
+  <div class="card-grid cols-2">
+    <div class="card">
+      <h4>Yield &amp; Process Analysis</h4>
+      <p>Foundries using AI defect inspection report <strong>10-15% yield improvement</strong> and up to 99% detection accuracy vs. 85% with rule-based systems.</p>
+      <p class="footnote" style="margin-top:8px;"><a href="https://www.aegissofttech.com/insights/ai-in-semiconductor-industry/" style="color:#555;">Aegis Softtech</a> &middot; <a href="https://www.netguru.com/blog/yield-detraction-semiconductor-manufacturing-ai" style="color:#555;">Netguru Case Study</a></p>
+    </div>
+    <div class="card">
+      <h4>Cross-Site Knowledge Capture</h4>
+      <p>RAG on process docs = searchable institutional memory across sites. LinkedIn cut per-issue resolution time <strong>28.6%</strong> with RAG + knowledge graph. Market growing at <strong>39.66% CAGR</strong>.</p>
+      <p class="footnote" style="margin-top:8px;"><a href="https://www.evidentlyai.com/blog/rag-examples" style="color:#555;">Evidently AI</a> &middot; <a href="https://nstarxinc.com/blog/the-next-frontier-of-rag-how-enterprise-knowledge-systems-will-evolve-2026-2030/" style="color:#555;">NStarX</a></p>
+    </div>
+    <div class="card">
+      <h4>Compliance &amp; Audit Prep</h4>
+      <p>LLM-powered compliance automation in aerospace/defense: <strong>40% better accuracy, 50% faster, 99% less manual effort</strong> in audit prep and documentation.</p>
+      <p class="footnote" style="margin-top:8px;"><a href="https://www.researchgate.net/publication/389705404" style="color:#555;">ResearchGate: LLMs in A&D</a> &middot; <a href="https://research.aimultiple.com/llm-automation/" style="color:#555;">AIMultiple</a></p>
+    </div>
+    <div class="card">
+      <h4>Internal Tooling &amp; Automation</h4>
+      <p>Enterprise users saving <strong>40-60 min/day</strong>. Gartner: 40% of enterprise apps will have AI agents by end of 2026, up from &lt;5% in 2025, an <strong>8x jump</strong>.</p>
+      <p class="footnote" style="margin-top:8px;"><a href="https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025" style="color:#555;">Gartner</a> &middot; <a href="https://www.deloitte.com/us/en/insights/topics/technology-management/tech-trends/2026/agentic-ai-strategy.html" style="color:#555;">Deloitte</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: What coaching looks like -->
+<div class="slide" data-slide="7">
+  <div class="label">The engagement</div>
+  <h2>Not a training.<br>An <span class="gradient">operating system upgrade</span>.</h2>
+  <div class="timeline">
+    <div class="timeline-item active">
+      <div class="dot"></div>
+      <h4>Week 1-2: Equip</h4>
+      <p>Get tools in place (GH Copilot / Cursor / Claude Code). Hands-on with real work, not demos. Tower's people start building with AI on day one.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="dot"></div>
+      <h4>Month 1: Amplify</h4>
+      <p>2-3 key people, coached weekly on their actual projects. Learn to specify, validate, and iterate with AI. They become the internal experts.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="dot"></div>
+      <h4>Month 2-3: Multiply</h4>
+      <p>Those people train others. Leadership coaching on AI strategy. The capability spreads organically, not through top-down mandates.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="dot"></div>
+      <h4>Ongoing: Evolve</h4>
+      <p>Models change quarterly. New capabilities unlock new possibilities. A strategic partner keeps Tower current and ahead.</p>
+    </div>
+  </div>
+  <blockquote style="margin-top: 20px; font-size: 20px;">
+    "Building Gen AI is not the same as using it.<br>
+    You can read about swimming all day. There's only one way to learn.<br>
+    Jump in. Start swimming."
+  </blockquote>
+  <p class="subtitle">
+    Equip people, not processes. The people scale everything else.
+  </p>
+</div>
+
+<!-- SLIDE 8: Tool landscape -->
+<div class="slide" data-slide="8">
+  <div class="label">Getting started</div>
+  <h2>The tool stack: <span class="gradient-green">practical options</span></h2>
+  <div class="card-grid cols-3">
+    <div class="card highlight">
+      <h4>GitHub Copilot</h4>
+      <p>VS Code extension with agent mode. Access to Opus 4.6, Gemini, GPT. Choose the model per task. Enterprise plan with admin controls and audit logs. Likely easiest security approval path.</p>
+      <p style="margin-top: 8px; color: var(--accent);">~$19/user/month</p>
+    </div>
+    <div class="card highlight">
+      <h4>Claude Code CLI</h4>
+      <p>The full harness. Autonomous agents that plan, build, test, and iterate on real codebases for hours. Terminal-based, maximum control. The tool behind the 100K-line C compiler demo.</p>
+      <p style="margin-top: 8px; color: var(--accent2);">Usage-based pricing</p>
+    </div>
+    <div class="card highlight">
+      <h4>Cursor</h4>
+      <p>VS Code fork with AI native to the IDE. Multi-model support (Claude, GPT, Gemini). Familiar editor experience, low onboarding friction. Already in use by some Tower teams.</p>
+      <p style="margin-top: 8px; color: var(--accent);">~$20/user/month</p>
+    </div>
+  </div>
+  <p class="subtitle" style="margin-top: 24px;">
+    All three access the same frontier models (Opus 4.6, Gemini, GPT). <br>
+    The difference is interface, not intelligence. Start where security allows.
+  </p>
+</div>
+
+<!-- SLIDE 9: Discovery questions -->
+<div class="slide" data-slide="9">
+  <div class="label">Discovery</div>
+  <h2>Starting the <span class="gradient">conversation</span></h2>
+  <div class="two-col">
+    <div>
+      <h3>Operations</h3>
+      <ul class="clean-list">
+        <li><span class="num">01</span><span class="q-text">What's the biggest IT bottleneck hitting you this quarter?</span></li>
+        <li><span class="num">02</span><span class="q-text">How are the Cursor users doing? What are they building?</span></li>
+        <li><span class="num">03</span><span class="q-text">What AI / Gen AI projects are in flight right now?</span></li>
+        <li><span class="num">04</span><span class="q-text">Where do you spend the most time firefighting?</span></li>
+        <li><span class="num">05</span><span class="q-text">What's on the backlog that never gets prioritized?</span></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Strategy &amp; Readiness</h3>
+      <ul class="clean-list">
+        <li><span class="num">06</span><span class="q-text">What tools/platforms are approved? What's the security posture for new tools?</span></li>
+        <li><span class="num">07</span><span class="q-text">What does the approval path look like for new tools or a pilot program?</span></li>
+        <li><span class="num">08</span><span class="q-text">If you could solve one problem this month with AI, what would it be?</span></li>
+        <li><span class="num">09</span><span class="q-text">What's the highest-ROI project right now, across any team, where someone is open to exploring a Gen AI solution?</span></li>
+        <li><span class="num">10</span><span class="q-text">What would a win look like at 30, 60, and 90 days?</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: The ask -->
+<div class="slide center" data-slide="10">
+  <div class="label">The real question</div>
+  <h2>Do you 10x one operation,<br>or 10x a person who does<br><span class="gradient">ten operations?</span></h2>
+  <p class="subtitle" style="margin-top: 20px;">
+    AI isn't Artificial Intelligence. It's <strong>Amplified Intellect</strong>.<br>
+    Not autonomous Terminators. Iron Man suits.<br>
+    The goal isn't to automate people away.<br>
+    It's to make each one of them <em>dangerous</em>.
+  </p>
+  <p style="margin-top: 50px; font-size: 18px; font-weight: 600; color: #ccc;">
+    Jason Ing
+  </p>
+  <p style="margin-top: 4px; font-size: 14px; color: var(--accent); letter-spacing: 1px;">
+    Gen AI Strategy &amp; Coaching
+  </p>
+  <p style="margin-top: 8px; font-size: 14px; color: #555;">
+    ingjason@gmail.com
+  </p>
+</div>
+
+<div class="slide-number" id="slideNum">1 / 10</div>
+<div class="nav-hint">&larr; &rarr; arrow keys to navigate &middot; P to print</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+
+  function showSlide(n) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(n, slides.length - 1));
+    slides[current].classList.add('active');
+    document.getElementById('slideNum').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progress').style.width = `${((current + 1) / slides.length) * 100}%`;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); showSlide(current + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); showSlide(current - 1); }
+    if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+    if (e.key === 'End') { e.preventDefault(); showSlide(slides.length - 1); }
+    if (e.key === 'p' || e.key === 'P') {
+      document.body.style.overflow = 'auto';
+      slides.forEach(s => s.style.display = 'flex');
+      window.print();
+      document.body.style.overflow = 'hidden';
+      slides.forEach(s => s.style.display = 'none');
+      slides[current].style.display = 'flex';
+    }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) { diff > 0 ? showSlide(current + 1) : showSlide(current - 1); }
+  });
+
+  // Click navigation
+  document.addEventListener('click', (e) => {
+    if (e.clientX > window.innerWidth * 0.6) showSlide(current + 1);
+    else if (e.clientX < window.innerWidth * 0.3) showSlide(current - 1);
+  });
+
+  showSlide(0);
+</script>
+</body>
+</html>
